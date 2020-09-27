@@ -1,19 +1,33 @@
 import React from 'react';
-
 import styles from './Burger.module.css'
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient'
 
 const burger = (props) => {
+    var transformedIngredients = Object.keys(props.ingredients)
+    .map(igKey => {
+        return [...Array(props.ingredients[igKey])].map((_, i) => {
+            return <BurgerIngredient key={igKey + i} type={igKey} />
+        });
+    })
+    .reduce((arr, el) => {
+        return arr.concat(el)
+    }, []);
+
+    if(transformedIngredients.length === 0){
+        transformedIngredients = <div>Please start adding ingredeints!</div>
+    }
+
     return (
         <div className = {styles.Burger}>
             <BurgerIngredient type = "bread-top" />
-            <BurgerIngredient type = "cheese" />
-            <BurgerIngredient type = "meat" />
-            <BurgerIngredient type = "bacon" />
-            <BurgerIngredient type = "salad" />
+            {transformedIngredients}
             <BurgerIngredient type = "bread-bottom" />
         </div>
     );
+
+    //find out got ingredients or not?
+
+
 }
 
 export default burger;
