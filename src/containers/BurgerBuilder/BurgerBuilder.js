@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Aux from '../../hoc/Auxiliary'
 import Burger from '../../components/Burger/Burger'
+import Modal from '../../components/UI/Modal/Modal'
 
 import BurgerControls from  '../../components/Burger/BuildControls/BuildControls'
 
@@ -20,7 +21,20 @@ class BurgerBuilder extends Component {
             meat: 0
         },
 
-        totalPrice:4
+        totalPrice:4,
+        purchasable: false
+    }
+
+    updatePurchaseState = (ingredients) => {
+        const sum = Object.keys(ingredients)
+        .map(igKey => {
+            return ingredients[igKey];
+        })
+        .reduce((sum, el) =>{
+            return sum + el;
+        }, 0);
+        console.log(sum)
+        this.setState({purchasable: sum > 0})
     }
 
     addIngredientHandler = (type) => {
@@ -34,6 +48,7 @@ class BurgerBuilder extends Component {
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice + priceAddiction;
         this.setState({totalPrice: newPrice, ingredients: updatedIngredients})
+        this.updatePurchaseState(updatedIngredients);
     }
 
     removeIngredientHandler = (type) => {
@@ -50,6 +65,7 @@ class BurgerBuilder extends Component {
         const oldPrice = this.state.totalPrice;
         const newPrice = oldPrice - priceDeduction;
         this.setState({totalPrice: newPrice, ingredients: updatedIngredients})
+        this.updatePurchaseState(updatedIngredients);
     }
 
 
@@ -64,12 +80,14 @@ class BurgerBuilder extends Component {
         }
         return (
             <Aux>
+                <Modal />
                 <Burger ingredients={this.state.ingredients}/>
                 <div>Burger</div>
                 <BurgerControls
                     ingredientAdded={this.addIngredientHandler}
                     ingredientRemoved={this.removeIngredientHandler}
                     disabled={disabledInfo}
+                    purchasable={this.state.purchasable}
                     price={this.state.totalPrice}/>
 
 
